@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+set -e
+set -o errexit
+set -o pipefail
+
+
+BUILD_DIR=${1:-}
+CACHE_DIR=${2:-}
+ENV_DIR=${3:-}
+
+GLITCHTIP_VERSION=$(cat "$ENV_DIR"/GLITCHTIP_VERSION)
+
+wget "https://gitlab.com/glitchtip/glitchtip-backend/-/archive/$GLITCHTIP_VERSION/glitchtip-backend-$GLITCHTIP_VERSION.tar.bz2" -O $CACHE_DIR/backend.tar.bz2
+
+cd $CACHE_DIR
+tar xf "$CACHE_DIR/backend.tar.bz2"
+cp -af $CACHE_DIR/glitchtip-backend-$GLITCHTIP_VERSION/. "$BUILD_DIR/"
+
+cat > $BUILD_DIR/requirements.txt << EOF
+.
+EOF
+sed -i "s/name = \"glitchtip-backend\"/name = \"glitchtip\"/" $BUILD_DIR/pyproject.toml
+
+wget "https://gitlab.com/api/v4/projects/15449363/jobs/artifacts/$GLITCHTIP_VERSION/download?job=build-assets" -O $CACHE_DIR/assets.zip
+
+rm -rf $CACHE_DIR/assets
+mkdir $CACHE_DIR/assets
+unzip $CACHE_DIR/assets.zip -d $CACHE_DIR/assets
+
+mv "$CACHE_DIR/assets/dist/glitchtip-frontend" "$BUILD_DIR/dist"
