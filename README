@@ -1,0 +1,6 @@
+# Buildpack for Glitchtip
+This repo contains a buildpack compatible with Scalingo to deploy an install of Glitchtip.
+
+To install Glitchtip on Scalingo with this buildpack, you should use the glitchtip-distribution repo : https://github.com/ETCLD/glitchtip-distribution .
+
+
