@@ -9,9 +9,7 @@ BUILD_DIR=${1:-}
 CACHE_DIR=${2:-}
 ENV_DIR=${3:-}
 
-# Install poetry and export requirements.txt
-curl -sSL https://install.python-poetry.org | python3 - --version 1.8.3
-$BUILD_DIR/.local/bin/poetry self add poetry-plugin-export@1.8.0
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
 GLITCHTIP_VERSION=$(cat "$ENV_DIR"/GLITCHTIP_VERSION)
 
@@ -21,9 +19,9 @@ cd $CACHE_DIR
 tar xf "$CACHE_DIR/backend.tar.bz2"
 cp -af $CACHE_DIR/glitchtip-backend-$GLITCHTIP_VERSION/. "$BUILD_DIR/"
 
-# Convert poetry format to requirements.txt
 cd $BUILD_DIR
-$BUILD_DIR/.local/bin/poetry export -f requirements.txt --output requirements.txt
+$BUILD_DIR/.local/bin/uv export --format requirements.txt > requirements.txt
+rm uv.lock
 
 sed -i "s/name = \"glitchtip-backend\"/name = \"glitchtip\"/" $BUILD_DIR/pyproject.toml
 
@@ -33,4 +31,4 @@ rm -rf $CACHE_DIR/assets
 mkdir $CACHE_DIR/assets
 unzip $CACHE_DIR/assets.zip -d $CACHE_DIR/assets
 
-mv "$CACHE_DIR/assets/dist/glitchtip-frontend" "$BUILD_DIR/dist"
+mv "$CACHE_DIR/assets/dist/glitchtip-frontend/browser" "$BUILD_DIR/dist"
