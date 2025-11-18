@@ -10,8 +10,8 @@ CACHE_DIR=${2:-}
 ENV_DIR=${3:-}
 
 # Install poetry and export requirements.txt
-curl -sSL https://install.python-poetry.org | python3
-$BUILD_DIR/.local/bin/poetry self add poetry-plugin-export
+curl -sSL https://install.python-poetry.org | python3 - --version 1.8.3
+$BUILD_DIR/.local/bin/poetry self add poetry-plugin-export@1.8.0
 
 GLITCHTIP_VERSION=$(cat "$ENV_DIR"/GLITCHTIP_VERSION)
 
